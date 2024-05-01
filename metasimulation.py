@@ -50,27 +50,25 @@ def step(ram, config):
         avec I la liste d'input du genre [2, a, b]
         R = [k, r1, r2, ..., rk]
         O = [n, o1, ..., on]'''
-    config = verifConfig(config)
     instruction = ram[config[0]]
-    print(instruction)
     if instruction[0] == "JUMP":
-        config[0] += instruction[1]
+        config[0] += instruction[1][0]
     else:    
         a, b, c = instruction[1]
         if type(a) == str:
-            pos1, pos2 = registre(a)
-            a = config[pos1][pos2]
+            a = registre(a, config)[0]
         if type(b) == str:
-            pos1, pos2 = registre(b)
-            b = config[pos1][pos2]
+            b = registre(b, config)[0]
         if type(c) == str:
-            pos1, pos2 = registre(c)
-        #print(a,b,c)
+            c, pos1, pos2 = registre(c, config)
         if instruction[0] == "ADD":
             config[pos1][pos2] = a + b
             config[0] += 1
         if instruction[0] == "SUB":
             config[pos1][pos2] = a - b
+            config[0] += 1
+        if instruction[0] == "MULT":
+            config[pos1][pos2] = a * b
             config[0] += 1
         if instruction[0] == "JL":
             if a < b:
@@ -100,31 +98,42 @@ def step(ram, config):
     return config
 
 
-def registre(r : str):
-    if r.startswith("i"):
-        return 1, int(r[-1])
-    elif r.startswith("r"):
-        return 2, int(r[-1])
-    elif r.startswith("o"):
-        return 3, int(r[-1])
+def registre(r : str, config : list):
+    val = int(r[-1])
+    if r.startswith("i") and "@" not in r:
+        return config[1][val], 1, val
+    elif r.startswith("i") and "@" in r:
+        return config[1][config[2][val]], 1, config[2][val]
+    
+    elif r.startswith("r") and "@" not in r:
+        return config[2][val], 2, val
+    elif r.startswith("r") and "@" in r:
+        return config[2][config[2][val]], 2, config[2][val]
+    
+    elif r.startswith("o") and "@" not in r:
+        return config[3][val], 3, val
+    elif r.startswith("o") and "@" in r:
+        return config[3][config[2][val]], 3, config[2][val]
 
 
-def verifConfig(config):
-    for i in range(len(config)):
-        if type(config[i]) == list:
-            if len(config[i])-1 != config[i][0]:
-                config[i].append(0)
+def initializeConfig(ram, mot):
+    config = [0, mot, [], []]
+    config[2].extend([0.0] * (len(set(re.findall(r'r[0-9]+', str(ram))))+10))
+    config[3].extend([0.0] * (len(set(re.findall(r'r[0-9]+', str(ram))))+10))
     return config
 
 
 def execRAM(ram, mot):
-    config = step(ram, [0, mot, [0], [0]])
-    for i in range(20):  # a changer et mettre cond d'arret
+    config = initializeConfig(ram, mot)
+    while config[0] < len(ram):
         step(ram, config)
+    config[-1] = [elem for elem in config[-1] if elem != 0.0]
+    config[-1][0] = len(config[-1]) - 1
+    print(config[-1])
 
 
-ram = convertTxt("ram.txt")
-execRAM(ram, [2, 4, 3])
+ram = convertTxt("bubble_sort.txt")
+execRAM(ram, [9, 6, 5, 1, 8, 2, 7, 2, 1, 3])
 
 '''if __name__ == "__main__":
     import sys
