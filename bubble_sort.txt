@@ -1,21 +1,21 @@
-ADD[1, O, r0]
-ADD[0, 0, r1]
-JE[r1, i0, 5]
-ADD[r1, 1, r1]
-ADD[1, 0, o0]
-ADD[i@r1, 0, o@r1]
-JUMP[-4]
-ADD[r0, 3, r0]
-ADD[i0, 0, r3]
-ADD[0, 0, r4]
-ADD[1, 0, r1]
-ADD[2, 0, r2]
-JL[o@r1, o@r2, 4]
-ADD[o@r2, 0, r4]
-ADD[o@r1, 0, o@r2]
-ADD[r4, 0, o@r1]
-ADD[r1, 1, r1]
-ADD[r2, 1, r2]
-JL[r1, r3, -6]
-SUB[r3, 1]
-JG[r3, 1, -10]
+ADD(1, O, r0)
+ADD(0, 0, r1)
+JE(r1, i0, 5)
+ADD(r1, 1, r1)
+ADD(1, 0, o0)
+ADD(i@r1, 0, o@r1)
+JUMP(-4)
+ADD(r0, 3, r0)
+ADD(i0, 0, r3)
+ADD(0, 0, r4)
+ADD(1, 0, r1)
+ADD(2, 0, r2)
+JL(o@r1, o@r2, 4)
+ADD(o@r2, 0, r4)
+ADD(o@r1, 0, o@r2)
+ADD(r4, 0, o@r1)
+ADD(r1, 1, r1)
+ADD(r2, 1, r2)
+JL(r1, r3, -6)
+SUB(r3, 1)
+JG(r3, 1, -10)
