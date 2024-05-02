@@ -126,7 +126,8 @@ def registre(r : str, config : list):
         return config[3][config[2][val]], 3, config[2][val]
 
 
-def initializeConfig(ram, mot):
+def initializeConfig(ram, mot : list):
+    mot.insert(0, len(mot))
     config = [0, mot, [0], [0]]
     config[2].extend([""] * (len(set(re.findall(r'r[0-9]+', str(ram))))-1))
     return config
@@ -136,13 +137,11 @@ def execRAM(ram, mot):
     config = initializeConfig(ram, mot)
     while config[0] < len(ram):
         step(ram, config)
-    #config[-1] = [elem for elem in config[-1] if elem != 0.0]
-    #config[-1][0] = len(config[-1]) - 1
     print(f"Résultat final : {config[-1]}")
 
 
 ram = convertTxt("test.txt")
-execRAM(ram, [33, 5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
+execRAM(ram, [5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
 
 
 def makeGraph(ram):
