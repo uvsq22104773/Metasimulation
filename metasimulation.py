@@ -62,10 +62,12 @@ def step(ram, config):
         if type(b) == str:
             b = registre(b, config)[0]
         if type(c) == str:
+            # pos1 représente l'endroit où trouver si c'est un i un r ou un o
+            # pos2 représente le nombre après la variable par exemple si on a r2 pos2 = 2 ce qui permet d'accéder à l'emplacement de r2
             c, pos1, pos2 = registre(c, config)
             # ajoute dans la liste O, R le bon nombre d'emplacement si il y en a pas assez
             if (pos1 == 3 and pos2 == 0) or (pos1 == 2 and pos2 == 0):
-                while (len(config[pos1])-2) != config[pos1][0]:
+                while (len(config[pos1])-2) < config[pos1][0]:
                     config[pos1].append("")
         if instruction[0] == "ADD":
             config[pos1][pos2] = a + b
@@ -113,6 +115,7 @@ def registre(r : str, config : list):
         return config[1][config[2][val]], 1, config[2][val]
     
     elif r.startswith("r") and "@" not in r:
+        print(config)
         return config[2][val], 2, val
     elif r.startswith("r") and "@" in r:
         return config[2][config[2][val]], 2, config[2][val]
@@ -125,7 +128,7 @@ def registre(r : str, config : list):
 
 def initializeConfig(ram, mot):
     config = [0, mot, [0], [0]]
-    #config[2].extend([""] * len(set(re.findall(r'r[0-9]+', str(ram)))))
+    config[2].extend([""] * (len(set(re.findall(r'r[0-9]+', str(ram))))-1))
     return config
 
 
@@ -133,13 +136,13 @@ def execRAM(ram, mot):
     config = initializeConfig(ram, mot)
     while config[0] < len(ram):
         step(ram, config)
-    config[-1] = [elem for elem in config[-1] if elem != 0.0]
-    config[-1][0] = len(config[-1]) - 1
+    #config[-1] = [elem for elem in config[-1] if elem != 0.0]
+    #config[-1][0] = len(config[-1]) - 1
     print(f"Résultat final : {config[-1]}")
 
 
 ram = convertTxt("test.txt")
-#execRAM(ram, [2, 2, 3])
+execRAM(ram, [33, 5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
 
 
 def makeGraph(ram):
