@@ -14,9 +14,10 @@ def a():
     print("tout le programme executer")
 
 def convertTxt(nom_fichier):
+    ''' Prend le nom du fichier à convertir en code RAM en entrée'''
     with open(nom_fichier, 'r') as fichier:
         contenu = fichier.readlines()
-    res = []
+    ram = []
     for lines in contenu:
         match = re.match(r'(\w+)\((.*?)(?:,\s*(.*?))?(?:,\s*(.*?))?\)', lines)
         if match:
@@ -29,7 +30,7 @@ def convertTxt(nom_fichier):
             except:
                 pass
             if operand2 == None:
-                res.append([operation, [operand1]])
+                ram.append([operation, [operand1]])
                 continue
             try:
                 operand2 = int(operand2)
@@ -39,10 +40,38 @@ def convertTxt(nom_fichier):
                 operand3 = int(operand3)
             except:
                 pass
-            res.append([operation, (operand1, operand2, operand3)])
+            ram.append([operation, [operand1, operand2, operand3]])
         else:
             continue
-    return res
+    # le but est de vérifier que les indices des r,i,o se suivent donc on les stocks tous
+    # et après on leur assigne si besoin un nouvel indice
+    R = list(set(re.findall(r'[r|i|o][0-9]+', str(ram))))
+    R.sort(key=lambda x : int(x[1:]))
+    translate = dict()
+    i, j, k = 0, 0, 0
+    for elem in R:
+        if elem.startswith("r"):
+            translate[elem] = "r" + str(i)
+            i += 1
+        if elem.startswith("i"):
+            translate[elem] = "i" + str(j)
+            j += 1
+        if elem.startswith("o"):
+            translate[elem] = "o" + str(k)
+            k += 1
+    # on va aller modifier le code en renomant les r,i,o
+    i = 0
+    for instruction in ram:
+        j = 0
+        for op in instruction[1]:
+            if type(op) == str:
+                if "@" in op:
+                    ram[i][1][j] = op[:2] + translate[op[2:]]
+                else:
+                    ram[i][1][j] = translate[op]
+            j += 1
+        i += 1
+    return ram
     
 
 def step(ram, config):
@@ -51,7 +80,7 @@ def step(ram, config):
         R = [k, r1, r2, ..., rk]
         O = [n, o1, ..., on]'''
     instruction = ram[config[0]]
-    print(f"Instrution : {instruction}")
+    print(f"Instruction : {instruction}")
     print(f"Configuration avant instruction :\nPosition actuelle : {config[0]}\nRegistre I : {config[1]}\nRegistre R : {config[2]}\nRegistre O : {config[3]}")
     if instruction[0] == "JUMP":
         config[0] += instruction[1][0]
@@ -108,6 +137,10 @@ def step(ram, config):
 
 
 def registre(r : str, config : list):
+    """ Renvoie la valeur du registre en fonction de sont type I, R, O ainsi que sa position dans la config
+        par exemple registre(r2, [ADD, [2, 2, 5] [2, 3, 4], [0]]) 
+        renvoie la valeur à la position 2 dans la liste R qui est la deuxième liste
+        donc 4, 2, 2"""
     val = int(r[-1])
     if r.startswith("i") and "@" not in r:
         return config[1][val], 1, val
@@ -115,7 +148,6 @@ def registre(r : str, config : list):
         return config[1][config[2][val]], 1, config[2][val]
     
     elif r.startswith("r") and "@" not in r:
-        print(config)
         return config[2][val], 2, val
     elif r.startswith("r") and "@" in r:
         return config[2][config[2][val]], 2, config[2][val]
@@ -127,6 +159,7 @@ def registre(r : str, config : list):
 
 
 def initializeConfig(ram, mot : list):
+    """ ajoute dans le mot la taille de l'entrée, initialise la première config et calcul la taille du registre O"""
     mot.insert(0, len(mot))
     config = [0, mot, [0], [0]]
     config[2].extend([""] * (len(set(re.findall(r'r[0-9]+', str(ram))))-1))
@@ -137,7 +170,7 @@ def execRAM(ram, mot):
     config = initializeConfig(ram, mot)
     while config[0] < len(ram):
         step(ram, config)
-    print(f"Résultat final : {config[-1]}")
+    print(f"Résultat final (avec la taille dans le premier élément) : {config[-1]}")
 
 
 ram = convertTxt("test.txt")
