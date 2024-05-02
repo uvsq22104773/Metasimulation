@@ -63,8 +63,8 @@ def step(ram, config):
             b = registre(b, config)[0]
         if type(c) == str:
             c, pos1, pos2 = registre(c, config)
-            # ajoute dans la liste O le bon nombre d'emplacement si il y en a pas assez
-            if pos1 == 3 and pos2 == 0:
+            # ajoute dans la liste O, R le bon nombre d'emplacement si il y en a pas assez
+            if (pos1 == 3 and pos2 == 0) or (pos1 == 2 and pos2 == 0):
                 while (len(config[pos1])-2) != config[pos1][0]:
                     config[pos1].append("")
         if instruction[0] == "ADD":
@@ -124,8 +124,8 @@ def registre(r : str, config : list):
 
 
 def initializeConfig(ram, mot):
-    config = [0, mot, [], [0]]
-    config[2].extend([""] * len(set(re.findall(r'r[0-9]+', str(ram)))))
+    config = [0, mot, [0], [0]]
+    #config[2].extend([""] * len(set(re.findall(r'r[0-9]+', str(ram)))))
     return config
 
 
@@ -138,8 +138,58 @@ def execRAM(ram, mot):
     print(f"Résultat final : {config[-1]}")
 
 
-ram = convertTxt("a_power_b.txt")
-execRAM(ram, [2, 2, 3])
+ram = convertTxt("test.txt")
+#execRAM(ram, [2, 2, 3])
+
+
+def makeGraph(ram):
+    ''' Fonction qui prend le code de la machine RAM
+        Et qui retourne le graphe orienté de ce dernier sous la forme d'un dictionnaire
+        avec les clés représentant les sommets donc l'instruction 
+        et les valeurs sont les sommets accessibles depuis cette instruction'''
+    graph = dict()
+    for i in range(len(ram)):
+        if ram[i][0] == "ADD" or ram[i][0] == "SUB" or ram[i][0] == "MULT" or ram[i][0] == "DIV":
+            graph[i] = [i+1]
+        elif ram[i][0] == "JUMP":
+            graph[i] = [i+ram[i][1][0]]
+        elif ram[i][0] == "JE" or ram[i][0] == "JGE" or ram[i][0] == "JLE" and ram[i][1][0] == ram[i][1][1]:
+            graph[i] = [i+ram[i][1][2]]
+        else:
+            graph[i] = [i+1, i+ram[i][1][2]]
+    return graph, ram
+
+
+def deadCode(graph : dict, ram, indice=0):
+    ''' Fonction qui prend en entré le graphe du code RAM et le code RAM
+        Et qui les retournent sans les instructions inaccessibles'''
+    accessible = set()
+    notAccessible = set()
+    # on regarde les éléments accessible
+    for i in range(len(graph)):
+        try:
+            for value in graph.get(i):
+                accessible.add(value)
+        except:
+            continue
+    # on regarde ceux qui ne sont pas dedans
+    for j in graph:
+        if j == 0:
+            continue
+        if j not in accessible:
+            notAccessible.add(j)
+    # on regarde les éléments inaccessible pour les supprimer du code RAM et du graph
+    for elem in notAccessible:
+        print(f"Code mort : {ram[elem-indice]}, instruction n°{elem}")
+        ram.remove(ram[elem-indice])
+        graph.pop(elem)
+        deadCode(graph, ram, indice+1)
+    return graph, ram
+
+
+#graph, ram = makeGraph(ram)
+#deadCode(graph, ram)
+#print(f"Nouveau graph : {graph} \nNouveau code RAM : {ram}")
 
 '''if __name__ == "__main__":
     import sys
