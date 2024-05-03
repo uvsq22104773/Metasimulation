@@ -173,8 +173,8 @@ def execRAM(ram, mot):
     print(f"Résultat final (avec la taille dans le premier élément) : {config[-1]}")
 
 
-ram = convertTxt("test.txt")
-execRAM(ram, [5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
+ram = convertTxt("test2.txt")
+#execRAM(ram, [5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
 
 
 def makeGraph(ram):
@@ -188,7 +188,7 @@ def makeGraph(ram):
             graph[i] = [i+1]
         elif ram[i][0] == "JUMP":
             graph[i] = [i+ram[i][1][0]]
-        elif ram[i][0] == "JE" or ram[i][0] == "JGE" or ram[i][0] == "JLE" and ram[i][1][0] == ram[i][1][1]:
+        elif (ram[i][0] == "JE" or ram[i][0] == "JGE" or ram[i][0] == "JLE") and ram[i][1][0] == ram[i][1][1]:
             graph[i] = [i+ram[i][1][2]]
         else:
             graph[i] = [i+1, i+ram[i][1][2]]
@@ -222,9 +222,32 @@ def deadCode(graph : dict, ram, indice=0):
     return graph, ram
 
 
-#graph, ram = makeGraph(ram)
-#deadCode(graph, ram)
-#print(f"Nouveau graph : {graph} \nNouveau code RAM : {ram}")
+def combine(graph, ram):
+    ''' ADD(4,2,r1)
+        ADD(r1,9,r1)
+        à tester si on a le bon résultat'''
+    for i in range(len(graph)-1):
+        if (ram[i][0] == "ADD" or ram[i][0] == "SUB") and (ram[i+1][0] == "ADD" or ram[i+1][0] == "SUB"):
+            if ram[i][1][2] == ram[i+1][1][2]:
+                combination = ram[i][1][:-1] + ram[i+1][1][:-1]
+                somme = 0
+                #print(combination)
+                for elem in combination.copy():
+                    if type(elem) != str:
+                        somme += elem
+                        combination.remove(elem)
+                #print(somme, combination)
+                if len(set(combination)) == 1:
+                    ram[i] = ["ADD", [somme, list(combination)[0], ram[i][1][2]]]
+                    ram.remove(ram[i+1])
+    return ram
+
+
+graph, ram = makeGraph(ram)
+graph, ram = deadCode(graph, ram)
+#print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
+combine(graph, ram)
+#print(f"modif ? : \t\t{ram}")
 
 '''if __name__ == "__main__":
     import sys
