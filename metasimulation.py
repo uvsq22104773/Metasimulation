@@ -107,6 +107,9 @@ def step(ram, config):
         if instruction[0] == "MULT":
             config[pos1][pos2] = a * b
             config[0] += 1
+        if instruction[0] == "DIV":
+            config[pos1][pos2] = a / b
+            config[0] += 1
         if instruction[0] == "JL":
             if a < b:
                 config[0] += c
@@ -226,28 +229,49 @@ def combine(graph, ram):
     ''' ADD(4,2,r1)
         ADD(r1,9,r1)
         à tester si on a le bon résultat'''
-    for i in range(len(graph)-1):
-        if (ram[i][0] == "ADD" or ram[i][0] == "SUB") and (ram[i+1][0] == "ADD" or ram[i+1][0] == "SUB"):
-            if ram[i][1][2] == ram[i+1][1][2]:
-                combination = ram[i][1][:-1] + ram[i+1][1][:-1]
-                somme = 0
-                #print(combination)
-                for elem in combination.copy():
-                    if type(elem) != str:
-                        somme += elem
-                        combination.remove(elem)
-                #print(somme, combination)
-                if len(set(combination)) == 1:
-                    ram[i] = ["ADD", [somme, list(combination)[0], ram[i][1][2]]]
-                    ram.remove(ram[i+1])
-    return ram
+    ramDebut = ram.copy()
+    try:
+        for i in range(len(ram)-1):
+            if (ram[i][0] == "ADD" or ram[i][0] == "SUB") and (ram[i+1][0] == "ADD" or ram[i+1][0] == "SUB"):
+                if ram[i][1][2] == ram[i+1][1][2]:
+                    part1 = [elem if ram[i][0] == "ADD" else -elem if type(elem) != str else elem for elem in ram[i][1]]
+                    part2 = [elem if ram[i+1][0] == "ADD" else -elem if type(elem) != str else elem for elem in ram[i+1][1]]
+                    combination = part1 + part2
+                    somme = 0
+                    for elem in combination.copy():
+                        if type(elem) != str:
+                            somme += elem
+                            combination.remove(elem)
+                    if len(set(combination)) == 1:
+                        ram[i] = ["ADD", [somme, list(combination)[0], ram[i][1][2]]]
+                        ram.remove(ram[i+1])
+            if (ram[i][0] == "MULT" or ram[i][0] == "DIV") and (ram[i+1][0] == "MULT" or ram[i+1][0] == "DIV"):
+                if ram[i][1][2] == ram[i+1][1][2]:
+                    part1 = [elem if ram[i][0] == "MULT" else 1/elem if type(elem) != str else elem for elem in ram[i][1]]
+                    part2 = [elem if ram[i+1][0] == "MULT" else 1/elem if type(elem) != str else elem for elem in ram[i+1][1]]
+                    combination = part1 + part2
+                    somme = 1
+                    for elem in combination.copy():
+                        if type(elem) != str:
+                            somme *= elem
+                            combination.remove(elem)
+                    if len(set(combination)) == 1:
+                        ram[i] = ["MULT", [somme, list(combination)[0], ram[i][1][2]]]
+                        ram.remove(ram[i+1])
+            if ram != ramDebut:
+                combine(graph, ram)
+            else:
+                return ram
+    except:
+        return ram
+        
 
 
 graph, ram = makeGraph(ram)
 graph, ram = deadCode(graph, ram)
-#print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
+print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
 combine(graph, ram)
-#print(f"modif ? : \t\t{ram}")
+print(f"modif ? : \t\t{ram}")
 
 '''if __name__ == "__main__":
     import sys
