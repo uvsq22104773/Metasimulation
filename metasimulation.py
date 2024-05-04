@@ -163,10 +163,13 @@ def registre(r : str, config : list):
 
 def initializeConfig(ram, mot : list):
     """ ajoute dans le mot la taille de l'entrée, initialise la première config et calcul la taille du registre O"""
-    mot.insert(0, len(mot))
-    config = [0, mot, [0], [0]]
-    config[2].extend([""] * (len(set(re.findall(r'r[0-9]+', str(ram))))-1))
-    return config
+    if type(mot) == list:
+        mot.insert(0, len(mot))
+        config = [0, mot, [0], [0]]
+        config[2].extend([""] * (len(set(re.findall(r'r[0-9]+', str(ram))))-1))
+        return config
+    else:
+        raise TypeError("Le mot doit être sous la forme d'une liste (la taille ne doit pas être précisé)")
 
 
 def execRAM(ram, mot):
@@ -176,7 +179,7 @@ def execRAM(ram, mot):
     print(f"Résultat final (avec la taille dans le premier élément) : {config[-1]}")
 
 
-ram = convertTxt("test2.txt")
+#ram = convertTxt("test2.txt")
 #execRAM(ram, [5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
 
 
@@ -195,6 +198,9 @@ def makeGraph(ram):
             graph[i] = [i+ram[i][1][2]]
         else:
             graph[i] = [i+1, i+ram[i][1][2]]
+    for elem in graph.get(i):
+        if elem >= len(ram):
+            graph[i] = ["FIN" if x == elem else x for x in graph[i]]
     return graph, ram
 
 
@@ -204,9 +210,9 @@ def deadCode(graph : dict, ram, indice=0):
     accessible = set()
     notAccessible = set()
     # on regarde les éléments accessible
-    for i in range(len(graph)):
+    for key in graph.keys():
         try:
-            for value in graph.get(i):
+            for value in graph.get(key):
                 accessible.add(value)
         except:
             continue
@@ -217,11 +223,14 @@ def deadCode(graph : dict, ram, indice=0):
         if j not in accessible:
             notAccessible.add(j)
     # on regarde les éléments inaccessible pour les supprimer du code RAM et du graph
+    cpt = len(notAccessible)
     for elem in notAccessible:
         print(f"Code mort : {ram[elem-indice]}, instruction n°{elem}")
         ram.remove(ram[elem-indice])
         graph.pop(elem)
-        deadCode(graph, ram, indice+1)
+        indice += 1
+    if len(notAccessible) != 0:
+        deadCode(graph, ram, indice)
     return graph, ram
 
 
@@ -266,12 +275,89 @@ def combine(graph, ram):
         return ram
         
 
+def reconnect(graphOrig, graphMod, ramMod):
+    keysOrig = list(graphOrig.keys())
+    keysMod = list(graphMod.keys())
+    valMod = list(graphMod.values())
+    dico = {"FIN" : "FIN"}
+    # on va crée un dictionnaire qui va changer les valeurs des sommets par exemple tous les sommets 6 vont être changer en sommet 4 si il y eu des suppressions de sommets
+    for i in range(len(keysMod)):
+        dico[keysMod[i]] = keysOrig[i]
+    tempKey = []
+    tempVal = []
+    reconnected = dict()
+    for elem in keysMod:
+        tempKey.append(dico[elem])
+    for liste in valMod:
+        temp = []
+        for elem in liste:
+            temp.append(dico[elem])
+        tempVal.append(temp)
+    # on forme le noueau dictionnaire avec les bon sommets et valeurs
+    for i in range(len(tempKey)):
+        reconnected[tempKey[i]] = tempVal[i]    
+    # on modifie le code RAM en fonction du nouveau graphe
+    instruction = ["ADD", "SUB", "MULT", "DIV"]
+    for i in range(len(ramMod)):
+        if ramMod[i][0] not in instruction:
+            j = 0
+            for key, val in reconnected.items():
+                if j == i and type(val[-1]) != str:
+                    ramMod[i][1][-1] = val[-1] - key
+                j += 1
+    return reconnected, ramMod
 
-graph, ram = makeGraph(ram)
-graph, ram = deadCode(graph, ram)
-print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
-combine(graph, ram)
-print(f"modif ? : \t\t{ram}")
+
+
+#graph, ram = makeGraph(ram)
+#graph, ram = deadCode(graph, ram)
+#print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
+#combine(graph, ram)
+#print(f"modif ? : \t\t{ram}")
+
+
+def q1(text):
+    print("Le texte en entrée est stocké sous la forme d'une liste contenant les instructions :")
+    ram = convertTxt(text)
+    for line in ram:
+        print(line)
+
+def q2(text, mot):
+    ''' Le mot en entrée doit être donner sous la forme d'une liste'''
+    print("Une configuration est donnée sous cette forme : [n, [I], [R], [O]]\n"
+          "n : le numéro de l'instruction\n"
+          "I : le registre input contenant le mot d'entrée et sa taille en I[0]\n"
+          "R : le registre de travail avec la taille en R[0]\n"
+          "O : le registre de sortie contenant la taille en O[0] et le résultat de l'éxécution de la machine RAM\n")
+    ram = convertTxt(text)
+    config = initializeConfig(ram, mot)
+    step(ram, config)
+
+def q3(text, mot):
+    ''' Le mot en entrée doit être donner sous la forme d'une liste'''
+    ram = convertTxt(text)
+    execRAM(ram, mot)
+
+def q8(text):
+    print("Le graphe est sous la forme d'un dictionaire dont les clés sont les numéros des instructions et les valeurs sont les numéros des instructions accessible depuis cette clé")
+    print("Affichage simplifié pour la lecture :")
+    ram = convertTxt(text)
+    graph, ram = makeGraph(ram)
+    for key, value in graph.items():
+        print(f"{ram[key]} => {[ram[val] if val != 'FIN' else val for val in value]}")
+
+def q9(text):
+
+    ram = convertTxt(text)
+    graph, ram = makeGraph(ram)
+    graphCopy = graph.copy()
+    graph, ram = deadCode(graph, ram)
+    graph, ram = reconnect(graphCopy, graph, ram)
+    print(f"Nouveau graphe : {graph}\nNouveau code RAM :")
+    for elem in ram:
+        print(elem)
+
+q9("test2.txt")
 
 '''if __name__ == "__main__":
     import sys
