@@ -529,7 +529,7 @@ def reponses():
     print(f"\nRéponse à la question 3, veuillez lancer q3 avec un fichier et un mot pour voir un exemple ou alors exécutez q3Ex")
     print(f"\nRéponse à la question 5, veuillez lancer q5Puissance ou q5Tri pour voir un exemple donné, ou alors lancez q3 avec a_power_b.txt ou bubble_sort.txt avec le mot de votre choix")
     print(f"Réponse à la question 6, veuillez lancer q6 pour voir le code RAM")
-    print(f"Réponse à la question 7, veuillez lancer q7Ex ou alors lancez q3 avec automata.txt et l'entrée 5,0,0,0,2,0,1,0,0,0,1,2,1,1,0,0,1,1,0,2,2,1,1,0,2,2,2,0,1,0,1 tous en ajoutant des 0 pour et a et des 1 pour des b")
+    print(f"Réponse à la question 7, veuillez lancer q7Ex ou alors lancez q3 avec automata.txt et l'entrée 5,0,0,0,2,0,1,0,0,0,1,2,1,1,0,0,1,1,0,2,2,1,1,0,2,2,2,0,1,0,1 tous en ajoutant des 0 pour des a et des 1 pour des b")
     print(q1.__doc__)
     print(f"Réponse à la question 8, veuillez lancer q8Ex pour voir un exemple défini ou alors lancer q8 avec un fichier de votre choix")
     print(q8.__doc__)
@@ -547,16 +547,19 @@ if __name__ == "__main__":
 
     fonctions_sans_mot = {
         "q1": q1,
-        "q3Ex" : q3Ex,
-        "q5Puissance" : q5Puissance,
-        "q5Tri" : q5Tri,
         "q6" : q6,
         "q7Ex" : q7Ex,
         "q8": q8,
-        "q8Ex" : q8Ex,
         "q9": q9,
         "q9Ex" : q9Ex,
-        "q10": q10,
+        "q10": q10
+    }
+
+    fonctions_ex = {
+        "q3Ex" : q3Ex,
+        "q5Puissance" : q5Puissance,
+        "q5Tri" : q5Tri,
+        "q8Ex" : q8Ex,
         "q10Ex" : q10Ex,
         "reponses" : reponses
     }
@@ -590,6 +593,14 @@ if __name__ == "__main__":
             fonction_a_executer(nom_fichier, liste_mot_entree)
         else:
             print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier> <nom_d_entree>")
+    elif sys.argv[1] in fonctions_ex:
+        if len(sys.argv) == 2:
+            # Exécution de la fonction spécifiée avec le fichier en entrée
+            nom_fonction = sys.argv[1]
+            fonction_a_executer = fonctions_ex[nom_fonction]
+            fonction_a_executer()
+        else:
+            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction>")
     elif sys.argv[1] == "help":
         print("Fonction disponible:")
         print("reponses : affiches les réponses aux questions et quelles commandes lancer pour avoir plus de détails")
