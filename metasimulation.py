@@ -513,7 +513,7 @@ if __name__ == "__main__":
             nom_fichier = sys.argv[2]
             fonction_a_executer(nom_fichier)
         else:
-            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier>")
+            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier>\nAide: python metasimulation.py help")
     elif sys.argv[1] in fonctions_avec_mot:
         if len(sys.argv) == 4:
             nom_fonction = sys.argv[1]
