@@ -1,0 +1,5 @@
+DIV(12, 3, r1)
+MULT(r1,2,r1)
+ADD(2,r1,r1)
+ADD(2, 0, r2)
+MULT(3, r1, r1)
