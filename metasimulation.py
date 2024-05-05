@@ -482,7 +482,7 @@ def q10(text):
     else:
         print("Pas de simplifications trouvées")
 
-q3("a_power_b.txt", [2, 4])
+#q3("a_power_b.txt", [2, 4])
 
 if __name__ == "__main__":
     import sys
@@ -501,7 +501,7 @@ if __name__ == "__main__":
 
     # Vérification des arguments de ligne de commande
     if len(sys.argv) < 2:
-        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
+        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>\nAide: python metasimulation.py help")
         sys.exit(1)
 
     # Vérification de la présence d'un fichier en entrée
@@ -513,7 +513,7 @@ if __name__ == "__main__":
             nom_fichier = sys.argv[2]
             fonction_a_executer(nom_fichier)
         else:
-            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier>\nAide: python metasimulation.py help")
+            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier>")
     elif sys.argv[1] in fonctions_avec_mot:
         if len(sys.argv) == 4:
             nom_fonction = sys.argv[1]
