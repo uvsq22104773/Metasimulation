@@ -36,7 +36,7 @@ def convertTxt(nom_fichier):
     R = list(set(re.findall(r'[r|i|o][0-9]+', str(ram))))
     R.sort(key=lambda x : int(x[1:]))
     translate = dict()
-    i, j, k = 0, 0, 0
+    i, j, k = 0, 1, 0
     for elem in R:
         if elem.startswith("r"):
             translate[elem] = "r" + str(i)
@@ -162,14 +162,10 @@ def initializeConfig(ram, mot : list):
 
 def execRAM(ram, mot):
     config = initializeConfig(ram, mot)
+    print(config)
     while config[0] < len(ram):
         step(ram, config)
     print(f"Résultat final (avec la taille dans le premier élément) : {config[-1]}")
-
-
-#ram = convertTxt("test2.txt")
-#execRAM(ram, [5, 0, 0, 0, 2, 0, 1, 0, 0, 0, 1, 2, 1, 1, 0, 0, 1, 1, 0, 2, 2, 1, 1, 0, 2, 2, 2, 0, 1, 0, 1, 0, 1])
-
 
 def makeGraph(ram):
     ''' Fonction qui prend le code de la machine RAM
@@ -223,38 +219,165 @@ def deadCode(graph : dict, ram, indice=0):
 
 
 def combine(graph, ram):
-    ''' ADD(4,2,r1)
-        ADD(r1,9,r1)
-        à tester si on a le bon résultat'''
     ramDebut = ram.copy()
     try:
         for i in range(len(ram)-1):
             if (ram[i][0] == "ADD" or ram[i][0] == "SUB") and (ram[i+1][0] == "ADD" or ram[i+1][0] == "SUB"):
                 if ram[i][1][2] == ram[i+1][1][2]:
-                    part1 = [elem if ram[i][0] == "ADD" else -elem if type(elem) != str else elem for elem in ram[i][1]]
-                    part2 = [elem if ram[i+1][0] == "ADD" else -elem if type(elem) != str else elem for elem in ram[i+1][1]]
+                    part1 = [elem for elem in ram[i][1]]
+                    part2 = [elem for elem in ram[i+1][1]]
                     combination = part1 + part2
                     somme = 0
-                    for elem in combination.copy():
-                        if type(elem) != str:
-                            somme += elem
-                            combination.remove(elem)
+                    if ram[i][0] == "ADD":
+                        for elem in part1:
+                            if type(elem) != str:
+                                somme += elem
+                                combination.remove(elem)
+                    if ram[i][0] == "SUB":
+                        somme = part1[0]
+                        somme -= part1[1]
+                        combination.remove(part1[0])
+                        combination.remove(part1[1])
+
+                    if ram[i+1][0] == "ADD":
+                        for elem in part2:
+                            if type(elem) != str:
+                                somme += elem
+                                combination.remove(elem)
+                    if ram[i+1][0] == "SUB":
+                        for elem in part2:
+                            if type(elem) != str:
+                                somme -= elem
+                                combination.remove(elem)    
                     if len(set(combination)) == 1:
-                        ram[i] = ["ADD", [somme, list(combination)[0], ram[i][1][2]]]
+                        ram[i] = ["ADD", [somme, 0, ram[i][1][2]]]
                         ram.remove(ram[i+1])
             if (ram[i][0] == "MULT" or ram[i][0] == "DIV") and (ram[i+1][0] == "MULT" or ram[i+1][0] == "DIV"):
                 if ram[i][1][2] == ram[i+1][1][2]:
-                    part1 = [elem if ram[i][0] == "MULT" else 1/elem if type(elem) != str else elem for elem in ram[i][1]]
-                    part2 = [elem if ram[i+1][0] == "MULT" else 1/elem if type(elem) != str else elem for elem in ram[i+1][1]]
+                    part1 = [elem for elem in ram[i][1]]
+                    part2 = [elem for elem in ram[i+1][1]]
                     combination = part1 + part2
-                    somme = 1
-                    for elem in combination.copy():
-                        if type(elem) != str:
-                            somme *= elem
-                            combination.remove(elem)
+                    produit = 1
+                    if ram[i][0] == "MULT":
+                        for elem in part1:
+                            if type(elem) != str:
+                                produit *= elem
+                                combination.remove(elem)
+                    if ram[i][0] == "DIV":
+                        produit = part1[0]
+                        produit /= part1[1]
+                        combination.remove(part1[0])
+                        combination.remove(part1[1])
+
+                    if ram[i+1][0] == "MULT":
+                        for elem in part2:
+                            if type(elem) != str:
+                                produit *= elem
+                                combination.remove(elem)
+                    if ram[i+1][0] == "DIV":
+                        if type(part2[0]) != str and type(part2[1]) != str:
+                            produit = part2[0]
+                            produit /= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        elif type(part2[0]) != str and type(part2[1]) == str:
+                            produit = part2[0]
+                            produit /= produit
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        else:
+                            produit = produit
+                            produit /= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])  
                     if len(set(combination)) == 1:
-                        ram[i] = ["MULT", [somme, list(combination)[0], ram[i][1][2]]]
+                        ram[i] = ["ADD", [produit, 0, ram[i][1][2]]]
                         ram.remove(ram[i+1])
+            if (ram[i][0] == "ADD" or ram[i][0] == "SUB") and (ram[i+1][0] == "MULT" or ram[i+1][0] == "DIV"):
+                if ram[i][1][2] == ram[i+1][1][2]:
+                    part1 = [elem for elem in ram[i][1]]
+                    part2 = [elem for elem in ram[i+1][1]]
+                    combination = part1 + part2
+                    somme = 0
+                    produit = 1
+                    if ram[i][0] == "ADD":
+                        for elem in part1:
+                            if type(elem) != str:
+                                somme += elem
+                                combination.remove(elem)
+                    if ram[i][0] == "SUB":
+                        somme = part1[0]
+                        somme -= part1[1]
+                        combination.remove(part1[0])
+                        combination.remove(part1[1])
+                    if ram[i+1][0] == "MULT":
+                        for elem in part2:
+                            if type(elem) != str:
+                                produit *= elem
+                                combination.remove(elem)
+                        produit *= somme
+                    if ram[i+1][0] == "DIV":
+                        if type(part2[0]) != str and type(part2[1]) != str:
+                            produit = part2[0]
+                            produit /= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        elif type(part2[0]) != str and type(part2[1]) == str:
+                            produit = part2[0]
+                            produit /= somme
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        else:
+                            produit = somme
+                            produit /= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                    if len(set(combination)) == 1:
+                        ram[i] = ["ADD", [produit, 0, ram[i][1][2]]]
+                        ram.remove(ram[i+1])
+            if (ram[i][0] == "MULT" or ram[i][0] == "DIV") and (ram[i+1][0] == "ADD" or ram[i+1][0] == "SUB"):
+                if ram[i][1][2] == ram[i+1][1][2]:
+                    part1 = [elem for elem in ram[i][1]]
+                    part2 = [elem for elem in ram[i+1][1]]
+                    combination = part1 + part2
+                    somme = 0
+                    produit = 1
+                    if ram[i][0] == "MULT":
+                        for elem in part1:
+                            if type(elem) != str:
+                                produit *= elem
+                                combination.remove(elem)
+                    if ram[i][0] == "DIV":
+                        produit = part1[0]
+                        produit /= part1[1]
+                        combination.remove(part1[0])
+                        combination.remove(part1[1])
+                    if ram[i+1][0] == "ADD":
+                        for elem in part2:
+                            if type(elem) != str:
+                                somme += elem
+                                combination.remove(elem)
+                        somme += produit
+                    if ram[i+1][0] == "SUB":
+                        if type(part2[0]) != str and type(part2[1]) != str:
+                            somme = part2[0]
+                            somme -= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        elif type(part2[0]) != str and type(part2[1]) == str:
+                            somme = part2[0]
+                            somme -= produit
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                        else:
+                            somme = produit
+                            somme -= part2[1]
+                            combination.remove(part2[0])
+                            combination.remove(part2[1])
+                    
+                    if len(set(combination)) == 1:
+                        ram[i] = ["ADD", [somme, 0, ram[i][1][2]]]
+                        ram.remove(ram[i+1])               
             if ram != ramDebut:
                 combine(graph, ram)
             else:
@@ -264,44 +387,40 @@ def combine(graph, ram):
         
 
 def reconnect(graphOrig, graphMod, ramMod):
-    keysOrig = list(graphOrig.keys())
-    keysMod = list(graphMod.keys())
-    valMod = list(graphMod.values())
-    dico = {"FIN" : "FIN"}
-    # on va crée un dictionnaire qui va changer les valeurs des sommets par exemple tous les sommets 6 vont être changer en sommet 4 si il y eu des suppressions de sommets
-    for i in range(len(keysMod)):
-        dico[keysMod[i]] = keysOrig[i]
-    tempKey = []
-    tempVal = []
-    reconnected = dict()
-    for elem in keysMod:
-        tempKey.append(dico[elem])
-    for liste in valMod:
-        temp = []
-        for elem in liste:
-            temp.append(dico[elem])
-        tempVal.append(temp)
-    # on forme le noueau dictionnaire avec les bon sommets et valeurs
-    for i in range(len(tempKey)):
-        reconnected[tempKey[i]] = tempVal[i]    
-    # on modifie le code RAM en fonction du nouveau graphe
-    instruction = ["ADD", "SUB", "MULT", "DIV"]
-    for i in range(len(ramMod)):
-        if ramMod[i][0] not in instruction:
-            j = 0
-            for key, val in reconnected.items():
-                if j == i and type(val[-1]) != str:
-                    ramMod[i][1][-1] = val[-1] - key
-                j += 1
-    return reconnected, ramMod
-
-
-
-#graph, ram = makeGraph(ram)
-#graph, ram = deadCode(graph, ram)
-#print(f"Nouveau graph : {graph} \nNouveau code RAM : \t{ram}")
-#combine(graph, ram)
-#print(f"modif ? : \t\t{ram}")
+    ''' Permet de réassembler le graphe et le code RAM quand il y a eu une suppression'''
+    if graphMod != graphOrig:
+        keysOrig = list(graphOrig.keys())
+        keysMod = list(graphMod.keys())
+        valMod = list(graphMod.values())
+        dico = {"FIN" : "FIN"}
+        # on va crée un dictionnaire qui va changer les valeurs des sommets par exemple tous les sommets 6 vont être changer en sommet 4 si il y eu des suppressions de sommets
+        for i in range(len(keysMod)):
+            dico[keysMod[i]] = keysOrig[i]
+        tempKey = []
+        tempVal = []
+        reconnected = dict()
+        for elem in keysMod:
+            tempKey.append(dico[elem])
+        for liste in valMod:
+            temp = []
+            for elem in liste:
+                temp.append(dico[elem])
+            tempVal.append(temp)
+        # on forme le noueau dictionnaire avec les bon sommets et valeurs
+        for i in range(len(tempKey)):
+            reconnected[tempKey[i]] = tempVal[i]    
+        # on modifie le code RAM en fonction du nouveau graphe
+        instruction = ["ADD", "SUB", "MULT", "DIV"]
+        for i in range(len(ramMod)):
+            if ramMod[i][0] not in instruction:
+                j = 0
+                for key, val in reconnected.items():
+                    if j == i and type(val[-1]) != str:
+                        ramMod[i][1][-1] = val[-1] - key
+                    j += 1
+        return reconnected, ramMod
+    else:
+        return graphOrig, ramMod
 
 
 def q1(text):
@@ -345,7 +464,18 @@ def q9(text):
     for elem in ram:
         print(elem)
 
-#q9("test2.txt")
+def q10(text):
+    ram = convertTxt(text)
+    ramC = ram.copy()
+    graph, ram = makeGraph(ram)
+    graph, ram = deadCode(graph, ram)
+    ram = combine(graph, ram)
+    if ram != ramC:
+        print("RAM simplifié :")
+        for elem in ram:
+            print(elem)
+    else:
+        print("Pas de simplifications trouvées")
 
 if __name__ == "__main__":
     import sys
