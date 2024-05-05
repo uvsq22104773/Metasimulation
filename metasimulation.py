@@ -36,7 +36,12 @@ def convertTxt(nom_fichier):
     R = list(set(re.findall(r'[r|i|o][0-9]+', str(ram))))
     R.sort(key=lambda x : int(x[1:]))
     translate = dict()
-    i, j, k = 0, 1, 0
+    i, k = 0, 0
+    nbI = set(re.findall(r'i[0-9]+', str(ram)))
+    if "i0" in nbI:
+        j = 0
+    else:
+        j = 1
     for elem in R:
         if elem.startswith("r"):
             translate[elem] = "r" + str(i)
@@ -424,7 +429,7 @@ def reconnect(graphOrig, graphMod, ramMod):
 
 
 def q1(text):
-    print("Le texte en entrée est stocké sous la forme d'une liste contenant les instructions :")
+    print("Le texte en entrée est stocké sous la forme d'une liste contenant les instructions :\nLes numéros des registres sont aussi réarangés pour qu'ils se suivent")
     ram = convertTxt(text)
     for line in ram:
         print(line)
@@ -476,6 +481,8 @@ def q10(text):
             print(elem)
     else:
         print("Pas de simplifications trouvées")
+
+q3("a_power_b.txt", [2, 4])
 
 if __name__ == "__main__":
     import sys
