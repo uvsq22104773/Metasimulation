@@ -496,7 +496,8 @@ if __name__ == "__main__":
     fonctions_sans_mot = {
         "q1": q1,
         "q8": q8,
-        "q9": q9
+        "q9": q9,
+        "q10": q10
     }
 
     # Vérification des arguments de ligne de commande
@@ -535,6 +536,7 @@ if __name__ == "__main__":
         print("q3: Réponse de la question 3")
         print("q8: Réponse de la question 8")
         print("q9: Réponse de la question 9")
+        print("q10: Réponse de la question 10")
     else:
         print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
         print("Aide: python metasimulation.py help")
