@@ -1,4 +1,4 @@
-# mon_programme.py
+# metasimulation.py
 import re
 
 def convertTxt(nom_fichier):
