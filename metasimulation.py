@@ -1,5 +1,6 @@
 # metasimulation.py
 import re
+import subprocess
 
 def convertTxt(nom_fichier):
     ''' Prend le nom du fichier à convertir en code RAM en entrée'''
@@ -502,7 +503,7 @@ if __name__ == "__main__":
 
     # Vérification des arguments de ligne de commande
     if len(sys.argv) < 2:
-        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>\nAide: python metasimulation.py help")
+        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>\nAide: python metasimulation.py help\nFichier disponible: python metasimulation.py file")
         sys.exit(1)
 
     # Vérification de la présence d'un fichier en entrée
@@ -537,6 +538,16 @@ if __name__ == "__main__":
         print("q8: Réponse de la question 8")
         print("q9: Réponse de la question 9")
         print("q10: Réponse de la question 10")
+    elif sys.argv[1] == "file":
+        # Exécuter la commande ls
+        result = subprocess.run(['ls'], stdout=subprocess.PIPE)
+
+        # Récupérer la sortie de la commande
+        output = result.stdout.decode('utf-8')
+
+        # Afficher la sortie
+        print(output)
     else:
         print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
         print("Aide: python metasimulation.py help")
+        print("Fichier disponible: python metasimulation.py file")
