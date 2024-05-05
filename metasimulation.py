@@ -1,18 +1,6 @@
 # mon_programme.py
 import re
 
-def fonction1(nom_fichier):
-    with open(nom_fichier, 'r') as fichier:
-        contenu = fichier.read()
-    print("Contenu du fichier :", contenu)
-
-def fonction2(nom_fichier):
-    with open(nom_fichier, 'a') as fichier:
-        fichier.write("\nNouvelle ligne ajoutée")
-
-def a():
-    print("tout le programme executer")
-
 def convertTxt(nom_fichier):
     ''' Prend le nom du fichier à convertir en code RAM en entrée'''
     with open(nom_fichier, 'r') as fichier:
