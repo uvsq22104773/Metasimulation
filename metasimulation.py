@@ -357,34 +357,59 @@ def q9(text):
     for elem in ram:
         print(elem)
 
-q9("test2.txt")
+#q9("test2.txt")
 
-'''if __name__ == "__main__":
+if __name__ == "__main__":
     import sys
 
     # Mapping entre les arguments de ligne de commande et les fonctions
-    fonctions_disponibles = {
-        "fonction1": fonction1,
-        "fonction2": fonction2
+    fonctions_avec_mot = {
+        "q2": q2,
+        "q3": q3
+    }
+
+    fonctions_sans_mot = {
+        "q1": q1,
+        "q8": q8,
+        "q9": q9
     }
 
     # Vérification des arguments de ligne de commande
-    if len(sys.argv) < 1:
-        print("Usage: python mon_programme.py <nom_fichier> <nom_fonction>")
+    if len(sys.argv) < 2:
+        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
         sys.exit(1)
-    
+
     # Vérification de la présence d'un fichier en entrée
-    if len(sys.argv) == 3 and sys.argv[2] in fonctions_disponibles:
-        # Exécution de la fonction spécifiée avec le fichier en entrée
-        nom_fonction = sys.argv[2]
-        fonction_a_executer = fonctions_disponibles[nom_fonction]
-        nom_fichier = sys.argv[1]
-        fonction_a_executer(nom_fichier)
-    elif len(sys.argv) == 2:
-        nom_fichier = sys.argv[1]
-        a()
-    else:
+    if sys.argv[1] in fonctions_sans_mot:
         if len(sys.argv) == 3:
-            print("Fonction non disponible.")
+            # Exécution de la fonction spécifiée avec le fichier en entrée
+            nom_fonction = sys.argv[1]
+            fonction_a_executer = fonctions_sans_mot[nom_fonction]
+            nom_fichier = sys.argv[2]
+            fonction_a_executer(nom_fichier)
         else:
-            print("Veuillez spécifier un fichier en entrée.")'''
+            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier>")
+    elif sys.argv[1] in fonctions_avec_mot:
+        if len(sys.argv) == 4:
+            nom_fonction = sys.argv[1]
+            fonction_a_executer = fonctions_avec_mot[nom_fonction]
+            nom_fichier = sys.argv[2]
+            # Chaîne avec des entiers séparés par des virgules
+            mot_entree = sys.argv[3]
+            # Diviser la chaîne en une liste de sous-chaînes séparées par des virgules
+            sous_chaines = mot_entree.split(',')
+            # Convertir chaque sous-chaîne en entier et les stocker dans une liste
+            liste_mot_entree = [int(x) for x in sous_chaines]
+            fonction_a_executer(nom_fichier, liste_mot_entree)
+        else:
+            print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier> <nom_d_entree>")
+    elif sys.argv[1] == "help":
+        print("Fonction disponible:")
+        print("q1: Réponse de la question 1")
+        print("q2: Réponse de la question 2")
+        print("q3: Réponse de la question 3")
+        print("q8: Réponse de la question 8")
+        print("q9: Réponse de la question 9")
+    else:
+        print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
+        print("Aide: python metasimulation.py help")
