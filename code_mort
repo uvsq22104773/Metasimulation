@@ -1,0 +1,6 @@
+ADD(2, 0, r0)
+JUMP(3)
+SUB(0, 2, r1)
+MULT(2, 2, r2)
+JE(r1, r2, -1)
+ADD(r2, 0, o0)
