@@ -1,6 +1,6 @@
 # README - Metasimulation
 
-Ce script Python `metasimulation.py` est conçu pour effectuer différentes opérations sur un code de machine RAM (Random Access Machine). Il offre plusieurs fonctionnalités, notamment la conversion de fichiers texte contenant du code RAM en une représentation interne, l'exécution de ce code avec une configuration donnée, l'analyse et la simplification du code, et bien plus encore.
+Ce script Python `metasimulation.py` est conçu pour effectuer différentes opérations sur un code de machine RAM (Random Access Machine). Il offre plusieurs fonctionnalités, notamment la conversion de fichiers texte contenant du code RAM en une représentation interne, l'exécution de ce code avec une configuration donnée, l'analyse et la simplification du code, et bien plus encore. Ce projet à été réalisé par MACHE Ethan et JOLY Théo
 
 ## Instructions d'exécution
 
@@ -39,6 +39,11 @@ Assurez-vous que vous disposez d'une version de Python 3 installée sur votre sy
 4. **Exemples d'utilisation**
 
    Voici quelques exemples d'utilisation :
+
+   - Pour afficher toutes les réponses aux questions :
+     ```bash
+     python metasimulation.py reponses
+     ```
 
    - Pour convertir un fichier de code RAM en une représentation interne et afficher les instructions :
      ```bash
