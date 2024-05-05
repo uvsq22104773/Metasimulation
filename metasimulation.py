@@ -522,19 +522,26 @@ def q10Ex():
     q10("example_simplification.txt")
 
 def reponses():
-    print(f"\nRéponse à la question 1, veuillez lancer q1 avec un fichier pour voir un exemple")
+    print(f"\nRéponse à la question 1. Veuillez exécuter q1 avec un fichier pour voir un exemple.")
     print(q1.__doc__)
-    print(f"\nRéponse à la question 2, veuillez lancer q2 avec un fichier pour voir un exemple")
+
+    print(f"\nRéponse à la question 2. Veuillez exécuter q2 avec un fichier pour voir un exemple.")
     print(q2.__doc__)
-    print(f"\nRéponse à la question 3, veuillez lancer q3 avec un fichier et un mot pour voir un exemple ou alors exécutez q3Ex")
-    print(f"\nRéponse à la question 5, veuillez lancer q5Puissance ou q5Tri pour voir un exemple donné, ou alors lancez q3 avec a_power_b.txt ou bubble_sort.txt avec le mot de votre choix")
-    print(f"Réponse à la question 6, veuillez lancer q6 pour voir le code RAM")
-    print(f"Réponse à la question 7, veuillez lancer q7Ex ou alors lancez q3 avec automata.txt et l'entrée 5,0,0,0,2,0,1,0,0,0,1,2,1,1,0,0,1,1,0,2,2,1,1,0,2,2,2,0,1,0,1 tous en ajoutant des 0 pour des a et des 1 pour des b")
+
+    print(f"\nRéponse à la question 3. Veuillez exécuter q3 avec un fichier et un mot pour voir un exemple, ou exécutez q3Ex.")
+
+    print(f"\nRéponse à la question 5. Veuillez exécuter q5Puissance ou q5Tri pour voir un exemple donné, ou lancez q3 avec a_power_b.txt ou bubble_sort.txt avec le mot de votre choix.")
+    print("Réponse à la question 6. Veuillez exécuter q6 pour voir le code RAM.")
+    print("Réponse à la question 7. Veuillez exécuter q7Ex ou alors lancez q3 avec automata.txt et l'entrée 5,0,0,0,2,0,1,0,0,0,1,2,1,1,0,0,1,1,0,2,2,1,1,0,2,2,2,0,1,0,1, en ajoutant des 0 pour des a et des 1 pour des b.")
     print(q1.__doc__)
-    print(f"Réponse à la question 8, veuillez lancer q8Ex pour voir un exemple défini ou alors lancer q8 avec un fichier de votre choix")
+
+    print("Réponse à la question 8. Veuillez exécuter q8Ex pour voir un exemple défini ou alors exécuter q8 avec un fichier de votre choix.")
     print(q8.__doc__)
-    print(f"Réponse à la question 9, veuillez lancer q9Ex pour voir un exemple ou alors lancer q9 avec un fichier de votre choix")
-    print(f"Réponse à la question 10, veuillez lancer q10Ex pour voir un exemple ou alors lancer q10 avec un fichier de votre choix")
+
+    print("Réponse à la question 9. Veuillez exécuter q9Ex pour voir un exemple ou alors exécuter q9 avec un fichier de votre choix.")
+
+    print("Réponse à la question 10. Veuillez exécuter q10Ex pour voir un exemple ou alors exécuter q10 avec un fichier de votre choix.")
+
 
 if __name__ == "__main__":
     import sys
@@ -602,22 +609,23 @@ if __name__ == "__main__":
         else:
             print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction>")
     elif sys.argv[1] == "help":
-        print("Fonction disponible:")
-        print("reponses : affiches les réponses aux questions et quelles commandes lancer pour avoir plus de détails")
-        print("q1: Réponse de la question 1 en précisant les arguments")
-        print("q2: Réponse de la question 2 en précisant les arguments")
-        print("q3: Réponse de la question 3 en précisant les arguments")
-        print("q3Ex: affiche un exemple d'éxecution")
-        print("q5Puissance: affiche un exemple d'éxecution pour a^b")
-        print("q5Tri: affiche un exemple d'éxecution pour tri à bulle")
-        print("q6: Réponse de la question 6")
-        print("q7Ex: affiche un exemple d'éxecution avec le mot aabb")
-        print("q8: Réponse de la question 8 en précisant les arguments")
-        print("q8Ex: affiche un exemple d'éxecution sur a^b")        
-        print("q9: Réponse de la question 9 en précisant les arguments")
-        print("q9Ex: affiche un exemple où il y a du code mort")
-        print("q10: Réponse de la question 10 en précisant les arguments")
-        print("q10Ex: affiche un exemple où il y a une simplification du code")
+        print("Fonctions disponibles :")
+        print("reponses : Affiche les réponses aux questions et quelles commandes lancer pour avoir plus de détails.")
+        print("q1 : Réponse de la question 1 en précisant les arguments.")
+        print("q2 : Réponse de la question 2 en précisant les arguments.")
+        print("q3 : Réponse de la question 3 en précisant les arguments.")
+        print("q3Ex : Affiche un exemple d'exécution.")
+        print("q5Puissance : Affiche un exemple d'exécution pour a^b.")
+        print("q5Tri : Affiche un exemple d'exécution pour le tri à bulle.")
+        print("q6 : Réponse de la question 6.")
+        print("q7Ex : Affiche un exemple d'exécution avec le mot 'aabb'.")
+        print("q8 : Réponse de la question 8 en précisant les arguments.")
+        print("q8Ex : Affiche un exemple d'exécution pour a^b.")
+        print("q9 : Réponse de la question 9 en précisant les arguments.")
+        print("q9Ex : Affiche un exemple où il y a du code mort.")
+        print("q10 : Réponse de la question 10 en précisant les arguments.")
+        print("q10Ex : Affiche un exemple où il y a une simplification du code.")
+
     elif sys.argv[1] == "file":
         # Exécuter la commande ls
         result = subprocess.run(['ls'], stdout=subprocess.PIPE)
