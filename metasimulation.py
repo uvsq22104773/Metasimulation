@@ -246,6 +246,7 @@ if __name__ == "__main__":
 
     # Vérification des arguments de ligne de commande
     if len(sys.argv) < 2:
+        # Afficher un message d'erreur et quitter le programme si aucun argument n'est fourni
         print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>\nAide: python metasimulation.py help\nFichier disponible: python metasimulation.py file")
         sys.exit(1)
 
@@ -274,6 +275,7 @@ if __name__ == "__main__":
         else:
             print(f"Usage de {sys.argv[1]}: python metasimulation.py <nom_fonction> <nom_fichier> <nom_d_entree>")
     elif sys.argv[1] == "help":
+        # Afficher les informations d'aide sur les fonctions disponibles
         print("Fonction disponible:")
         print("q1: Réponse de la question 1")
         print("q2: Réponse de la question 2")
@@ -291,6 +293,7 @@ if __name__ == "__main__":
         # Afficher la sortie
         print(output)
     else:
+        # Afficher un message d'erreur pour une utilisation incorrecte du programme
         print("Usage: python metasimulation.py <nom_fonction> <nom_fichier> <mot_d_entree>")
         print("Aide: python metasimulation.py help")
         print("Fichier disponible: python metasimulation.py file")
