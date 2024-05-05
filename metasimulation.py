@@ -547,11 +547,8 @@ if __name__ == "__main__":
 
     fonctions_sans_mot = {
         "q1": q1,
-        "q6" : q6,
-        "q7Ex" : q7Ex,
         "q8": q8,
         "q9": q9,
-        "q9Ex" : q9Ex,
         "q10": q10
     }
 
@@ -559,7 +556,10 @@ if __name__ == "__main__":
         "q3Ex" : q3Ex,
         "q5Puissance" : q5Puissance,
         "q5Tri" : q5Tri,
+        "q6" : q6,
+        "q7Ex" : q7Ex,
         "q8Ex" : q8Ex,
+        "q9Ex" : q9Ex,
         "q10Ex" : q10Ex,
         "reponses" : reponses
     }
