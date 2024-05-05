@@ -15,7 +15,7 @@ Assurez-vous que vous disposez d'une version de Python 3 installée sur votre sy
    Clonez ce dépôt dans votre répertoire local en utilisant la commande suivante :
 
    ```bash
-   git clone [https://github.com/uvsq22104773/Metasimulation/tree/main]
+   git clone https://github.com/uvsq22104773/Metasimulation/tree/main
    ```
 
 2. **Navigation vers le répertoire**
